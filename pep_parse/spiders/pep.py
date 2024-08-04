@@ -7,7 +7,7 @@ from ..items import PepParseItem
 class PepSpider(scrapy.Spider):
     name = 'pep'
     allowed_domains = ['peps.python.org']
-    start_urls = [PEP_URL,]
+    start_urls = [PEP_URL, ]
 
     def parse(self, response):
         links = response.css('#numerical-index table tbody tr a[href^="pep"]')
