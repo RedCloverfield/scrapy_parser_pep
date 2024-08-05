@@ -22,4 +22,4 @@ class PepSpider(scrapy.Spider):
             number=number[4:],
             name=title,
             status=response.css('dt:contains("Status") + dd abbr::text').get()
-            )
+        )
