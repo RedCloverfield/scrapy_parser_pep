@@ -6,10 +6,13 @@ from constants import BASE_DIR, DATETIME_FORMAT, RESULTS_DIR
 
 
 class PepParsePipeline:
-    statuses = defaultdict(int)
+
+    def __init__(self):
+        self.results_dir = BASE_DIR / RESULTS_DIR
+        self.results_dir.mkdir(exist_ok=True)
 
     def open_spider(self, spider):
-        pass
+        self.statuses = defaultdict(int)
 
     def process_item(self, item, spider):
         self.statuses[item['status']] += 1
@@ -17,14 +20,13 @@ class PepParsePipeline:
 
     def close_spider(self, spider):
         current_datetime = dt.datetime.now().strftime(DATETIME_FORMAT)
-        results_dir = BASE_DIR / RESULTS_DIR
-        results_dir.mkdir(exist_ok=True)
         filename = f'status_summary_{current_datetime}.csv'
-        file_path = results_dir / filename
-        results = [
-            ('Статус', 'Количество'),
-            *self.statuses.items(),
-            ('Всего', sum(self.statuses.values())),
-        ]
+        file_path = self.results_dir / filename
         with open(file_path, 'w', encoding='utf-8') as file:
-            csv.writer(file, dialect=csv.unix_dialect()).writerows(results)
+            csv.writer(
+                file, dialect=csv.unix_dialect(), quoting=csv.QUOTE_NONE
+            ).writerows(
+                ('Статус', 'Количество'),
+                *self.statuses.items(),
+                ('Всего', sum(self.statuses.values())),
+            )
